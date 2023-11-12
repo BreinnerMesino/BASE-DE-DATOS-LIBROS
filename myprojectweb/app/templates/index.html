@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Libros</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Libros</h1>
+        <ul>
+            {% for libro in libros %}
+                <li>
+                    {{ libro.nombre_libro }} - {{ libro.nombre_autor }} - {{ libro.estado }}
+                    <form method="post" action="{{ url_for('eliminar_libro', libro_id=libro.id) }}">
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Agregar Libro</h2>
+        <form method="post" action="{{ url_for('agregar_libro') }}">
+            <label for="nombre_libro">Nombre del Libro:</label>
+            <input type="text" name="nombre_libro" required><br>
+
+            <label for="nombre_autor">Nombre del Autor:</label>
+            <input type="text" name="nombre_autor" required><br>
+
+            <label for="estado">Estado:</label>
+            <select name="estado" required>
+                <option value="Leído">Leído</option>
+                <option value="por leer">Por Leer</option>
+            </select><br>
+
+            <button type="submit">Agregar Libro</button>
+        </form>
+    </div>
+
+    <script>
+        function eliminarLibro(libroId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este libro?')) {
+                fetch(`/eliminar_libro/${libroId}`, {
+                    method: 'POST',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.result);
+                    location.reload(); // Recargar la página después de eliminar el libro
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+    </script>
+</body>
+</html>
